@@ -17,17 +17,17 @@
 	    "condition":"mock_peak_check",
 	    "a":[0,0],
 	    "b":[-1000,-1000],
-	    "pause":0.5,
+	    "pause":0,
 	    "verbose":true},
 	"2d_lowres":{
 	    "func":"mock_measurement",
 	    "condition":"mock_score_func",
 	    "target":[-500,-250],
-	    "pause":1},
+	    "pause":0},
 	"2d_highres":{
 	    "func":"mock_measurement",
 	    "condition":"check_nothing",
-	    "pause":2},
+	    "pause":0},
 	"score_func": "mock_count_stages"},
 
     "detector": {
@@ -40,7 +40,7 @@
 	"directions": [-1.0, -1.0, -1.0],
 	"lb_box": [-2000, -2000, -2000],
 	"bound": [-2000, -2000, -2000],
-	"num_samples": 10,
+	"num_samples": 5,
 	"origin": [0,0,0],
 	"ub_box": [0, 0, 0],
 	"sampler": "CMAES_sampler"},
