@@ -31,7 +31,7 @@ class CMAESConfig(object):
         """
         Mean vector between lower and upper bound
         """
-        return [(self.upper_bound[i]+self.lower_bound[i])/2 for i in range(len)]
+        return [(self.upper_bound[i]+self.lower_bound[i])/2 for i in range(len(self.lower_bound))]
 
     
     def eval_sigma0(self):
@@ -86,7 +86,7 @@ def lower_bound_of_angle_between(lb_i, ub_i, lb_j, ub_j):
     return 0
     
 
-def upper_bound_of_angle_between(self, lb_i, ub_i, lb_j, ub_j):
+def upper_bound_of_angle_between(lb_i, ub_i, lb_j, ub_j):
     """
     Given the lower and upper bound of two dimensions,
     it returns the upper bound of the included angle

@@ -10,7 +10,7 @@ import numpy as np
 def score_nothing(invest_em_results, config):
     return 0
 
-
+    
 def mock_count_stages(invest_results, config):
     return -invest_results['conditional_idx']
 

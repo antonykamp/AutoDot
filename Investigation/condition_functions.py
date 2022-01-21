@@ -11,6 +11,7 @@ import numpy as np
 from .scoring.Last_score import final_score_cls
 from skimage.feature import blob_log
 import time
+import os
 
 def mock_peak_check(anchor,minc,maxc,configs,**kwags):
     a = configs.get('a',None)
@@ -79,9 +80,41 @@ def reduce_then_clf_2dmap(data,minc,maxc,configs,**kwags):
     Y = np.squeeze(clf.predict(X_red))
     return Y, Y, None
 
+def rfc_peak_check(trace,minc,maxc,configs,**kwags):
+    #print('config file in rfc peak check', configs)
+    this_dir, this_filename = os.path.split(__file__)
+    default_filename = os.path.join(this_dir, "peak_check_tools", "rfc_peak.pkl")
+    filename = configs.get('peak_classifier', default_filename) 
+    
+    #norm settings
+    offset = np.amin(trace)
+    maxval = np.amax(trace)
+    #relative_threshold = configs.get('relative_threshold', 0.5) 
+    #absolute_threshold = offset+relative_threshold * (maxval-offset)
+    #configs['absolute_dynamic_threshold']=absolute_threshold
+    #print('config file in rfc peak check', configs)
+    
+    trace_norm=trace.copy()-offset
+    trace_norm = (trace_norm)/((maxval-offset)) #normalize the current amplitude
+
+    # Brandon peak classifier
+    # Load peak classifier
+    with open(filename, "rb") as rfcpkl:
+        rfc = pickle.load(rfcpkl)
+    
+    peak_found = rfc.predict(np.atleast_2d(trace_norm))
+  
+    return bool(peak_found), bool(peak_found), None
+
 
 def last_score(data,minc,maxc,configs,**kwags):
-    fsc = final_score_cls(minc,maxc,configs['noise'],configs['segmentation_thresh'])
+    offset = np.amin(data)
+    maxval = np.amax(data)
+    relative_threshold = configs.get('relative_threshold', 0.2) 
+    seg_thresh = offset+relative_threshold * (maxval-offset)
+    seg_thresh = np.min((seg_thresh, configs['segmentation_thresh']))
+    print('seg_thresh:', seg_thresh)
+    fsc = final_score_cls(minc,maxc,configs['noise'],seg_thresh)
     
     score = getattr(fsc,configs.get('mode','score'))(data,diff=configs.get('diff',1))
     
