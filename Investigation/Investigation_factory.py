@@ -6,7 +6,7 @@ Created on Thu Nov 14 10:28:23 2019
 """
 from . import measurement_functions
 from . import condition_functions
-from . import score_functions
+from .score_function.score_function_handler import ScoreFunctionHandler
 import numpy as np
 
 
@@ -19,11 +19,7 @@ class Investigation_stage():
         
         self.configure_investigation_sequence(configs)
 
-        score_function_config = configs.get('score_func', {})
-        sfunc = score_function_config.get('func', 'score_nothing')
-        if isinstance(sfunc, str):
-            sfunc = getattr(score_functions,sfunc)
-        self.score_function = lambda invest_result: sfunc(invest_result, score_function_config)
+        self.score_function_handler = ScoreFunctionHandler(configs.get('score_func', {}))
 
         self.inv_max = len(self.aquisition_functions)
         self.isdynamic = configs.get('cond_meas',[False]*self.inv_max)
@@ -102,7 +98,7 @@ class Investigation_stage():
         results_full['extra_measure'] = results
         results_full['conditional_idx'] = self.cond[i]
         results_full['times'] = self.timer.times_list[-1]
-        results_full['score'] = self.score_function(results_full)
+        results_full['score'] = self.score_function_handler.score(results_full)
         return results_full
       
         
